@@ -1,11 +1,10 @@
-import { useMapStore } from "./store/map"
+import {Game} from "./components/Game";
 
 function App() {
 
-  const { map } = useMapStore()
   return (
     <>
-      <h1 className="bg-red-200">map: {JSON.stringify(map, null, 2)}</h1>
+      <Game/>
     </>
   )
 }

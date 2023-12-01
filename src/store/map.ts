@@ -1,11 +1,24 @@
-import { create } from "zustand";
+import {create} from "zustand";
 
 type MapStore = {
-    map: number[]
+  map: Array<number[]>
 }
 
+export enum MapTile {
+  WALL = 1,
+  FLOOR = 2,
+}
+
+
 export const useMapStore = create<MapStore>(() => ({
-    map: [
-        1, 2, 3, 4,
-    ]
+  map: [
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 2, 2, 2, 2, 2, 2, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+  ]
 }))
