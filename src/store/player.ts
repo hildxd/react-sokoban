@@ -1,53 +1,81 @@
-import {create} from "zustand";
+import { create } from "zustand";
+import { useMapStore } from "./map.ts";
 
 export type PlayerStore = {
   player: {
-    x: number,
-    y: number,
-  },
-  movePlayerLeft: () => void,
-  movePlayerRight: () => void,
-  movePlayerUp: () => void,
-  movePlayerDown: () => void,
-  reset: () => void,
+    x: number;
+    y: number;
+  };
+  movePlayerLeft: () => void;
+  movePlayerRight: () => void;
+  movePlayerUp: () => void;
+  movePlayerDown: () => void;
+  reset: () => void;
+  setPlayer: (x: number, y: number) => void;
+};
+
+function getMapTileWithPlayer(newPlayer: PlayerStore["player"]): number {
+  const { map } = useMapStore.getState();
+  return map[newPlayer.y][newPlayer.x];
 }
 
-export const usePlayerStore = create<PlayerStore>((set) => ({
+function canMove(target: number): boolean {
+  return target === 2;
+}
+
+export const usePlayerStore = create<PlayerStore>((set, get) => ({
   player: {
     x: 1,
     y: 1,
   },
   movePlayerLeft: () => {
-    set((state) => ({
-      player: {
-        ...state.player,
-        x: state.player.x - 1,
-      },
-    }));
+    const newPlayer = {
+      ...get().player,
+      x: get().player.x - 1,
+    };
+
+    const target = getMapTileWithPlayer(newPlayer);
+    if (canMove(target)) {
+      set(() => ({
+        player: newPlayer,
+      }));
+    }
   },
   movePlayerRight: () => {
-    set((state) => ({
-      player: {
-        ...state.player,
-        x: state.player.x + 1,
-      },
-    }));
+    const newPlayer = {
+      ...get().player,
+      x: get().player.x + 1,
+    };
+    const target = getMapTileWithPlayer(newPlayer);
+    if (canMove(target)) {
+      set(() => ({
+        player: newPlayer,
+      }));
+    }
   },
   movePlayerUp: () => {
-    set((state) => ({
-      player: {
-        ...state.player,
-        y: state.player.y - 1,
-      },
-    }));
+    const newPlayer = {
+      ...get().player,
+      y: get().player.y - 1,
+    };
+    const target = getMapTileWithPlayer(newPlayer);
+    if (canMove(target)) {
+      set(() => ({
+        player: newPlayer,
+      }));
+    }
   },
   movePlayerDown: () => {
-    set((state) => ({
-      player: {
-        ...state.player,
-        y: state.player.y + 1,
-      },
-    }));
+    const newPlayer = {
+      ...get().player,
+      y: get().player.y + 1,
+    };
+    const target = getMapTileWithPlayer(newPlayer);
+    if (canMove(target)) {
+      set(() => ({
+        player: newPlayer,
+      }));
+    }
   },
   reset: () => {
     set(() => ({
@@ -57,4 +85,12 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
       },
     }));
   },
-}))
+  setPlayer: (x, y) => {
+    set(() => ({
+      player: {
+        x,
+        y,
+      },
+    }));
+  },
+}));
