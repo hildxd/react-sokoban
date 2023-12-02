@@ -16,7 +16,7 @@ describe("player store", () => {
   it("should move player left", () => {
     const { result } = initPlayerStore();
     act(() => {
-      result.current.setPlayer(2, 1);
+      result.current.setPlayerPosition(2, 1);
       result.current.movePlayerLeft();
     });
     expect(result.current.player.x).toBe(1);
@@ -33,7 +33,7 @@ describe("player store", () => {
   it("should move player up", () => {
     const { result } = initPlayerStore();
     act(() => {
-      result.current.setPlayer(1, 2);
+      result.current.setPlayerPosition(1, 2);
       result.current.movePlayerUp();
     });
     expect(result.current.player.y).toBe(1);
@@ -59,7 +59,7 @@ describe("player store", () => {
   it("should not move if there is an obstacle on the right", () => {
     const { result } = initPlayerStore();
     act(() => {
-      result.current.setPlayer(6, 1);
+      result.current.setPlayerPosition(6, 1);
       result.current.movePlayerRight();
     });
     expect(result.current.player.x).toBe(6);
@@ -76,7 +76,7 @@ describe("player store", () => {
   it("should not move if there is an obstacle down", () => {
     const { result } = initPlayerStore();
     act(() => {
-      result.current.setPlayer(1, 6);
+      result.current.setPlayerPosition(1, 6);
       result.current.movePlayerDown();
     });
     expect(result.current.player.y).toBe(6);

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { useMapStore } from "./map.ts";
+import { getMapTileWithPlayer, MapTile } from "./map.ts";
 
 export type PlayerStore = {
   player: {
@@ -11,16 +11,11 @@ export type PlayerStore = {
   movePlayerUp: () => void;
   movePlayerDown: () => void;
   reset: () => void;
-  setPlayer: (x: number, y: number) => void;
+  setPlayerPosition: (x: number, y: number) => void;
 };
 
-function getMapTileWithPlayer(newPlayer: PlayerStore["player"]): number {
-  const { map } = useMapStore.getState();
-  return map[newPlayer.y][newPlayer.x];
-}
-
 function canMove(target: number): boolean {
-  return target === 2;
+  return [MapTile.FLOOR].includes(target);
 }
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
@@ -36,9 +31,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
 
     const target = getMapTileWithPlayer(newPlayer);
     if (canMove(target)) {
-      set(() => ({
-        player: newPlayer,
-      }));
+      get().setPlayerPosition(newPlayer.x, newPlayer.y);
     }
   },
   movePlayerRight: () => {
@@ -48,9 +41,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     };
     const target = getMapTileWithPlayer(newPlayer);
     if (canMove(target)) {
-      set(() => ({
-        player: newPlayer,
-      }));
+      get().setPlayerPosition(newPlayer.x, newPlayer.y);
     }
   },
   movePlayerUp: () => {
@@ -60,9 +51,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     };
     const target = getMapTileWithPlayer(newPlayer);
     if (canMove(target)) {
-      set(() => ({
-        player: newPlayer,
-      }));
+      get().setPlayerPosition(newPlayer.x, newPlayer.y);
     }
   },
   movePlayerDown: () => {
@@ -72,9 +61,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     };
     const target = getMapTileWithPlayer(newPlayer);
     if (canMove(target)) {
-      set(() => ({
-        player: newPlayer,
-      }));
+      get().setPlayerPosition(newPlayer.x, newPlayer.y);
     }
   },
   reset: () => {
@@ -85,7 +72,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       },
     }));
   },
-  setPlayer: (x, y) => {
+  setPlayerPosition: (x, y) => {
     set(() => ({
       player: {
         x,
