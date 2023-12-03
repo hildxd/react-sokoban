@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { usePlayerStore } from "../player.ts";
 import { act, renderHook } from "@testing-library/react";
-import { useMapStore } from "../map.ts";
+import { useCargoStore } from "../cargo.ts";
+import { setupCargo, setupMap, setupPlayerPosition } from "./setup.ts";
 
 function initPlayerStore() {
   return renderHook(() => usePlayerStore());
@@ -11,13 +12,12 @@ describe("player store", () => {
   describe("base move", () => {
     beforeEach(() => {
       const { result } = initPlayerStore();
-      const map = renderHook(() => useMapStore());
+      setupMap([
+        [2, 2, 2],
+        [2, 2, 2],
+        [2, 2, 2],
+      ]);
       act(() => {
-        map.result.current.setupMap([
-          [2, 2, 2],
-          [2, 2, 2],
-          [2, 2, 2],
-        ]);
         result.current.reset();
       });
     });
@@ -57,8 +57,7 @@ describe("player store", () => {
 
   describe("collision wall", () => {
     beforeEach(() => {
-      const { result } = renderHook(() => useMapStore());
-      result.current.setupMap([
+      setupMap([
         [1, 1, 1],
         [1, 2, 1],
         [1, 1, 1],
@@ -94,6 +93,125 @@ describe("player store", () => {
         result.current.movePlayerDown();
       });
       expect(result.current.player.y).toBe(1);
+    });
+  });
+
+  describe("move cargo", () => {
+    beforeAll(() => {
+      setupMap([
+        [2, 2, 2],
+        [2, 2, 2],
+        [2, 2, 2],
+      ]);
+    });
+    it("should move cargo left", () => {
+      // setup test data
+      setupPlayerPosition({
+        x: 2,
+        y: 0,
+      });
+      setupCargo([
+        {
+          x: 1,
+          y: 0,
+        },
+      ]);
+      // run test
+      const { result: playerStore } = initPlayerStore();
+      const { result: cargoStore } = renderHook(() => useCargoStore());
+      act(() => {
+        playerStore.current.movePlayerLeft();
+      });
+      expect(cargoStore.current.cargos[0]).toEqual({
+        x: 0,
+        y: 0,
+      });
+      expect(playerStore.current.player).toEqual({
+        x: 1,
+        y: 0,
+      });
+    });
+
+    it("should move cargo right", () => {
+      // setup test data
+      setupCargo([
+        {
+          x: 1,
+          y: 0,
+        },
+      ]);
+      setupPlayerPosition({
+        x: 0,
+        y: 0,
+      });
+      // run test
+      const { result: playerStore } = initPlayerStore();
+      const { result: cargoStore } = renderHook(() => useCargoStore());
+      act(() => {
+        playerStore.current.movePlayerRight();
+      });
+      expect(cargoStore.current.cargos[0]).toEqual({
+        x: 2,
+        y: 0,
+      });
+      expect(playerStore.current.player).toEqual({
+        x: 1,
+        y: 0,
+      });
+    });
+    it("should move cargo up", () => {
+      // setup test data
+      setupCargo([
+        {
+          x: 0,
+          y: 1,
+        },
+      ]);
+      setupPlayerPosition({
+        x: 0,
+        y: 2,
+      });
+      // run test
+      const { result: playerStore } = initPlayerStore();
+      const { result: cargoStore } = renderHook(() => useCargoStore());
+      act(() => {
+        playerStore.current.movePlayerUp();
+      });
+      expect(cargoStore.current.cargos[0]).toEqual({
+        x: 0,
+        y: 0,
+      });
+      expect(playerStore.current.player).toEqual({
+        x: 0,
+        y: 1,
+      });
+    });
+    it("should move cargo down", () => {
+      // setup test data
+      setupCargo([
+        {
+          x: 0,
+          y: 1,
+        },
+      ]);
+      setupPlayerPosition({
+        x: 0,
+        y: 0,
+      });
+      // run test
+      const { result: playerStore } = initPlayerStore();
+      const { result: cargoStore } = renderHook(() => useCargoStore());
+      act(() => {
+        playerStore.current.movePlayerDown();
+      });
+      expect(cargoStore.current.cargos[0]).toEqual({
+        x: 0,
+        y: 2,
+      });
+      expect(playerStore.current.player).toEqual({
+        x: 0,
+        y: 1,
+      });
     });
   });
 });
