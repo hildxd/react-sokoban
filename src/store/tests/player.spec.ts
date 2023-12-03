@@ -4,14 +4,10 @@ import { act, renderHook } from "@testing-library/react";
 import { useCargoStore } from "../cargo.ts";
 import { setupCargo, setupMap, setupPlayerPosition } from "./setup.ts";
 
-function initPlayerStore() {
-  return renderHook(() => usePlayerStore());
-}
-
 describe("player store", () => {
   describe("base move", () => {
     beforeEach(() => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       setupMap([
         [2, 2, 2],
         [2, 2, 2],
@@ -22,7 +18,7 @@ describe("player store", () => {
       });
     });
     it("should move player left", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerLeft();
       });
@@ -30,7 +26,7 @@ describe("player store", () => {
     });
 
     it("should move player right", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerRight();
       });
@@ -38,7 +34,7 @@ describe("player store", () => {
     });
 
     it("should move player up", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerUp();
       });
@@ -46,7 +42,7 @@ describe("player store", () => {
     });
 
     it("should move player down", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerDown();
       });
@@ -64,7 +60,7 @@ describe("player store", () => {
       ]);
     });
     it("should not move if there is an wall on the left", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerLeft();
       });
@@ -72,7 +68,7 @@ describe("player store", () => {
     });
 
     it("should not move if there is an wall on the right", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerRight();
       });
@@ -80,7 +76,7 @@ describe("player store", () => {
     });
 
     it("should not move if there is an wall up", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerUp();
       });
@@ -88,7 +84,7 @@ describe("player store", () => {
     });
 
     it("should not move if there is an wall down", () => {
-      const { result } = initPlayerStore();
+      const { result } = renderHook(() => usePlayerStore());
       act(() => {
         result.current.movePlayerDown();
       });
@@ -117,7 +113,7 @@ describe("player store", () => {
         },
       ]);
       // run test
-      const { result: playerStore } = initPlayerStore();
+      const { result: playerStore } = renderHook(() => usePlayerStore());
       const { result: cargoStore } = renderHook(() => useCargoStore());
       act(() => {
         playerStore.current.movePlayerLeft();
@@ -145,7 +141,7 @@ describe("player store", () => {
         y: 0,
       });
       // run test
-      const { result: playerStore } = initPlayerStore();
+      const { result: playerStore } = renderHook(() => usePlayerStore());
       const { result: cargoStore } = renderHook(() => useCargoStore());
       act(() => {
         playerStore.current.movePlayerRight();
@@ -172,7 +168,7 @@ describe("player store", () => {
         y: 2,
       });
       // run test
-      const { result: playerStore } = initPlayerStore();
+      const { result: playerStore } = renderHook(() => usePlayerStore());
       const { result: cargoStore } = renderHook(() => useCargoStore());
       act(() => {
         playerStore.current.movePlayerUp();
@@ -199,7 +195,7 @@ describe("player store", () => {
         y: 0,
       });
       // run test
-      const { result: playerStore } = initPlayerStore();
+      const { result: playerStore } = renderHook(() => usePlayerStore());
       const { result: cargoStore } = renderHook(() => useCargoStore());
       act(() => {
         playerStore.current.movePlayerDown();
