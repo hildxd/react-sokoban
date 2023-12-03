@@ -1,84 +1,99 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { usePlayerStore } from "../player.ts";
 import { act, renderHook } from "@testing-library/react";
+import { useMapStore } from "../map.ts";
 
 function initPlayerStore() {
   return renderHook(() => usePlayerStore());
 }
 
 describe("player store", () => {
-  beforeEach(() => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.reset();
+  describe("base move", () => {
+    beforeEach(() => {
+      const { result } = initPlayerStore();
+      const map = renderHook(() => useMapStore());
+      act(() => {
+        map.result.current.setupMap([
+          [2, 2, 2],
+          [2, 2, 2],
+          [2, 2, 2],
+        ]);
+        result.current.reset();
+      });
     });
-  });
-  it("should move player left", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.setPlayerPosition(2, 1);
-      result.current.movePlayerLeft();
-    });
-    expect(result.current.player.x).toBe(1);
-  });
-
-  it("should move player right", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.movePlayerRight();
-    });
-    expect(result.current.player.x).toBe(2);
-  });
-
-  it("should move player up", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.setPlayerPosition(1, 2);
-      result.current.movePlayerUp();
-    });
-    expect(result.current.player.y).toBe(1);
-  });
-
-  it("should move player down", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.movePlayerDown();
+    it("should move player left", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerLeft();
+      });
+      expect(result.current.player.x).toBe(0);
     });
 
-    expect(result.current.player.y).toBe(2);
+    it("should move player right", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerRight();
+      });
+      expect(result.current.player.x).toBe(2);
+    });
+
+    it("should move player up", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerUp();
+      });
+      expect(result.current.player.y).toBe(0);
+    });
+
+    it("should move player down", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerDown();
+      });
+
+      expect(result.current.player.y).toBe(2);
+    });
   });
 
-  it("should not move if there is an obstacle on the left", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.movePlayerLeft();
+  describe("collision wall", () => {
+    beforeEach(() => {
+      const { result } = renderHook(() => useMapStore());
+      result.current.setupMap([
+        [1, 1, 1],
+        [1, 2, 1],
+        [1, 1, 1],
+      ]);
     });
-    expect(result.current.player.x).toBe(1);
-  });
+    it("should not move if there is an wall on the left", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerLeft();
+      });
+      expect(result.current.player.x).toBe(1);
+    });
 
-  it("should not move if there is an obstacle on the right", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.setPlayerPosition(6, 1);
-      result.current.movePlayerRight();
+    it("should not move if there is an wall on the right", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerRight();
+      });
+      expect(result.current.player.x).toBe(1);
     });
-    expect(result.current.player.x).toBe(6);
-  });
 
-  it("should not move if there is an obstacle up", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.movePlayerUp();
+    it("should not move if there is an wall up", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerUp();
+      });
+      expect(result.current.player.y).toBe(1);
     });
-    expect(result.current.player.y).toBe(1);
-  });
 
-  it("should not move if there is an obstacle down", () => {
-    const { result } = initPlayerStore();
-    act(() => {
-      result.current.setPlayerPosition(1, 6);
-      result.current.movePlayerDown();
+    it("should not move if there is an wall down", () => {
+      const { result } = initPlayerStore();
+      act(() => {
+        result.current.movePlayerDown();
+      });
+      expect(result.current.player.y).toBe(1);
     });
-    expect(result.current.player.y).toBe(6);
   });
 });

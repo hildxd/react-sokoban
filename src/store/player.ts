@@ -1,22 +1,19 @@
 import { create } from "zustand";
-import { getMapTileWithPlayer, MapTile } from "./map.ts";
+import { useMapStore } from "./map.ts";
 
+export type Position = {
+  x: number;
+  y: number;
+};
 export type PlayerStore = {
-  player: {
-    x: number;
-    y: number;
-  };
+  player: Position;
   movePlayerLeft: () => void;
   movePlayerRight: () => void;
   movePlayerUp: () => void;
   movePlayerDown: () => void;
   reset: () => void;
-  setPlayerPosition: (x: number, y: number) => void;
+  setPlayerPosition: (position: Position) => void;
 };
-
-function canMove(target: number): boolean {
-  return [MapTile.FLOOR].includes(target);
-}
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
   player: {
@@ -29,40 +26,40 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       x: get().player.x - 1,
     };
 
-    const target = getMapTileWithPlayer(newPlayer);
-    if (canMove(target)) {
-      get().setPlayerPosition(newPlayer.x, newPlayer.y);
+    if (useMapStore.getState().isWall(newPlayer)) {
+      return;
     }
+    get().setPlayerPosition(newPlayer);
   },
   movePlayerRight: () => {
     const newPlayer = {
       ...get().player,
       x: get().player.x + 1,
     };
-    const target = getMapTileWithPlayer(newPlayer);
-    if (canMove(target)) {
-      get().setPlayerPosition(newPlayer.x, newPlayer.y);
+    if (useMapStore.getState().isWall(newPlayer)) {
+      return;
     }
+    get().setPlayerPosition(newPlayer);
   },
   movePlayerUp: () => {
     const newPlayer = {
       ...get().player,
       y: get().player.y - 1,
     };
-    const target = getMapTileWithPlayer(newPlayer);
-    if (canMove(target)) {
-      get().setPlayerPosition(newPlayer.x, newPlayer.y);
+    if (useMapStore.getState().isWall(newPlayer)) {
+      return;
     }
+    get().setPlayerPosition(newPlayer);
   },
   movePlayerDown: () => {
     const newPlayer = {
       ...get().player,
       y: get().player.y + 1,
     };
-    const target = getMapTileWithPlayer(newPlayer);
-    if (canMove(target)) {
-      get().setPlayerPosition(newPlayer.x, newPlayer.y);
+    if (useMapStore.getState().isWall(newPlayer)) {
+      return;
     }
+    get().setPlayerPosition(newPlayer);
   },
   reset: () => {
     set(() => ({
@@ -72,12 +69,9 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       },
     }));
   },
-  setPlayerPosition: (x, y) => {
+  setPlayerPosition: (position) => {
     set(() => ({
-      player: {
-        x,
-        y,
-      },
+      player: position,
     }));
   },
 }));

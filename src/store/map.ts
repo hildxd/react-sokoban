@@ -1,8 +1,11 @@
 import { create } from "zustand";
-import { PlayerStore } from "./player.ts";
+import { Position } from "./player.ts";
 
+export type Map = MapTile[][];
 type MapStore = {
-  map: Array<number[]>;
+  map: Map;
+  setupMap: (map: Map) => void;
+  isWall: (postion: Position) => boolean;
 };
 
 export enum MapTile {
@@ -10,8 +13,8 @@ export enum MapTile {
   FLOOR = 2,
 }
 
-export const useMapStore = create<MapStore>(() => ({
-  map: [
+export const useMapStore = create<MapStore>((set, get) => ({
+  Map: [
     [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 2, 2, 2, 2, 2, 2, 1],
     [1, 2, 2, 2, 2, 2, 2, 1],
@@ -21,9 +24,10 @@ export const useMapStore = create<MapStore>(() => ({
     [1, 2, 2, 2, 2, 2, 2, 1],
     [1, 1, 1, 1, 1, 1, 1, 1],
   ],
+  setupMap: (map: Map) => {
+    set({ map });
+  },
+  isWall: (position: Position) => {
+    return get().map[position.y][position.x] === MapTile.WALL;
+  },
 }));
-
-export function getMapTileWithPlayer(newPlayer: PlayerStore["player"]): number {
-  const { map } = useMapStore.getState();
-  return map[newPlayer.y][newPlayer.x];
-}
