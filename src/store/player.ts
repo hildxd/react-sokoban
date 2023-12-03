@@ -1,10 +1,7 @@
 import { create } from "zustand";
 import { useMapStore } from "./map.ts";
+import { Position } from "../hooks/usePosition.ts";
 
-export type Position = {
-  x: number;
-  y: number;
-};
 export type PlayerStore = {
   player: Position;
   movePlayerLeft: () => void;
@@ -14,6 +11,8 @@ export type PlayerStore = {
   reset: () => void;
   setPlayerPosition: (position: Position) => void;
 };
+
+const isWall = useMapStore.getState().isWall;
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
   player: {
@@ -26,7 +25,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       x: get().player.x - 1,
     };
 
-    if (useMapStore.getState().isWall(newPlayer)) {
+    if (isWall(newPlayer)) {
       return;
     }
     get().setPlayerPosition(newPlayer);
@@ -36,7 +35,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       ...get().player,
       x: get().player.x + 1,
     };
-    if (useMapStore.getState().isWall(newPlayer)) {
+    if (isWall(newPlayer)) {
       return;
     }
     get().setPlayerPosition(newPlayer);
@@ -46,7 +45,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       ...get().player,
       y: get().player.y - 1,
     };
-    if (useMapStore.getState().isWall(newPlayer)) {
+    if (isWall(newPlayer)) {
       return;
     }
     get().setPlayerPosition(newPlayer);
@@ -56,7 +55,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       ...get().player,
       y: get().player.y + 1,
     };
-    if (useMapStore.getState().isWall(newPlayer)) {
+    if (isWall(newPlayer)) {
       return;
     }
     get().setPlayerPosition(newPlayer);

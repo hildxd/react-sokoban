@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Position } from "./player.ts";
+import { Position } from "../hooks/usePosition.ts";
 
 export type Map = MapTile[][];
 type MapStore = {
@@ -14,7 +14,7 @@ export enum MapTile {
 }
 
 export const useMapStore = create<MapStore>((set, get) => ({
-  Map: [
+  map: [
     [1, 1, 1, 1, 1, 1, 1, 1],
     [1, 2, 2, 2, 2, 2, 2, 1],
     [1, 2, 2, 2, 2, 2, 2, 1],

@@ -1,18 +1,7 @@
 import playerImg from "../../assets/keeper.png";
 import React from "react";
 import { usePlayerStore } from "../../store/player.ts";
-
-const usePosition = () => {
-  const SETP = 32;
-  const { player } = usePlayerStore();
-  return React.useMemo(
-    () => ({
-      left: player.x * SETP + "px",
-      top: player.y * SETP + "px",
-    }),
-    [player],
-  );
-};
+import { usePosition } from "../../hooks/usePosition.ts";
 
 const useMove = () => {
   const { movePlayerLeft, movePlayerDown, movePlayerRight, movePlayerUp } =
@@ -43,7 +32,8 @@ const useMove = () => {
 };
 
 export const Player = () => {
-  const position = usePosition();
+  const { player } = usePlayerStore();
+  const { position } = usePosition(player);
   useMove();
 
   return (
