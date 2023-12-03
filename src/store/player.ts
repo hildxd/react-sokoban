@@ -11,6 +11,7 @@ export type PlayerStore = {
   movePlayerDown: () => void;
   reset: () => void;
   setPlayerPosition: (position: Position) => void;
+  _move: (dx: number, dy: number) => void;
 };
 
 const isWall = useMapStore.getState().isWall;
@@ -21,10 +22,10 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     x: 1,
     y: 1,
   },
-  movePlayerLeft: () => {
+  _move: (dx, dy) => {
     const newPlayer = {
-      ...get().player,
-      x: get().player.x - 1,
+      x: get().player.x + dx,
+      y: get().player.y + dy,
     };
 
     if (isWall(newPlayer)) {
@@ -32,51 +33,24 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     }
     const cargoIndex = findCargoWithPosition(newPlayer);
     if (cargoIndex !== -1) {
-      useCargoStore.getState().moveCargoLeft(cargoIndex);
+      useCargoStore.getState().move(cargoIndex, {
+        x: newPlayer.x + dx,
+        y: newPlayer.y + dy,
+      });
     }
     get().setPlayerPosition(newPlayer);
+  },
+  movePlayerLeft: () => {
+    get()._move(-1, 0);
   },
   movePlayerRight: () => {
-    const newPlayer = {
-      ...get().player,
-      x: get().player.x + 1,
-    };
-    if (isWall(newPlayer)) {
-      return;
-    }
-    const cargoIndex = findCargoWithPosition(newPlayer);
-    if (cargoIndex !== -1) {
-      useCargoStore.getState().moveCargoRight(cargoIndex);
-    }
-    get().setPlayerPosition(newPlayer);
+    get()._move(1, 0);
   },
   movePlayerUp: () => {
-    const newPlayer = {
-      ...get().player,
-      y: get().player.y - 1,
-    };
-    if (isWall(newPlayer)) {
-      return;
-    }
-    const cargoIndex = findCargoWithPosition(newPlayer);
-    if (cargoIndex !== -1) {
-      useCargoStore.getState().moveCargoUp(cargoIndex);
-    }
-    get().setPlayerPosition(newPlayer);
+    get()._move(0, -1);
   },
   movePlayerDown: () => {
-    const newPlayer = {
-      ...get().player,
-      y: get().player.y + 1,
-    };
-    if (isWall(newPlayer)) {
-      return;
-    }
-    const cargoIndex = findCargoWithPosition(newPlayer);
-    if (cargoIndex !== -1) {
-      useCargoStore.getState().moveCargoDown(cargoIndex);
-    }
-    get().setPlayerPosition(newPlayer);
+    get()._move(0, 1);
   },
   reset: () => {
     set(() => ({

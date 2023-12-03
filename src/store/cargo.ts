@@ -10,10 +10,7 @@ type CargoStore = {
   cargos: Cargo[];
   setupCargos: (cargos: Cargo[]) => void;
   findCargoWithPosition: (position: Position) => number;
-  moveCargoLeft: (index: number) => void;
-  moveCargoRight: (index: number) => void;
-  moveCargoUp: (index: number) => void;
-  moveCargoDown: (index: number) => void;
+  move: (index: number, position: Position) => void;
 };
 
 export const useCargoStore = create(
@@ -38,24 +35,9 @@ export const useCargoStore = create(
         (cargo) => cargo.x === position.x && cargo.y === position.y,
       );
     },
-    moveCargoLeft: (index: number) => {
+    move: (index: number, position: Position) => {
       set((state) => {
-        state.cargos[index].x = state.cargos[index].x - 1;
-      });
-    },
-    moveCargoRight: (index: number) => {
-      set((state) => {
-        state.cargos[index].x = state.cargos[index].x + 1;
-      });
-    },
-    moveCargoUp: (index: number) => {
-      set((state) => {
-        state.cargos[index].y = state.cargos[index].y - 1;
-      });
-    },
-    moveCargoDown: (index: number) => {
-      set((state) => {
-        state.cargos[index].y = state.cargos[index].y + 1;
+        state.cargos[index] = position;
       });
     },
   })),
