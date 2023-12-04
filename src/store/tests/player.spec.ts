@@ -210,4 +210,28 @@ describe("player store", () => {
       });
     });
   });
+  describe("fix errors", () => {
+    it("can't move to last floor", () => {
+      setupMap([
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+      ]);
+      setupPlayerPosition({
+        x: 1,
+        y: 2,
+      });
+      setupCargo([{ x: 5, y: 5 }]);
+      const { result } = renderHook(() => usePlayerStore());
+      act(() => {
+        result.current.movePlayerUp();
+      });
+      expect(result.current.player.y).toBe(1);
+    });
+  });
 });

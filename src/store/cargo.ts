@@ -9,36 +9,33 @@ export type Cargo = {
 type CargoStore = {
   cargos: Cargo[];
   setupCargos: (cargos: Cargo[]) => void;
-  findCargoWithPosition: (position: Position) => number;
-  move: (index: number, position: Position) => void;
+  _findCargoWithPosition: (position: Position) => number;
+  move: (findPosition: Position, newPosition: Position) => void;
+  isCargo: (position: Position) => boolean;
 };
 
 export const useCargoStore = create(
   immer<CargoStore>((set, get) => ({
-    cargos: [
-      {
-        x: 2,
-        y: 2,
-      },
-      {
-        x: 3,
-        y: 2,
-      },
-    ],
+    cargos: [],
     setupCargos: (cargos: Cargo[]) => {
       set((state) => {
         state.cargos = cargos;
       });
     },
-    findCargoWithPosition: (position: Position) => {
+    _findCargoWithPosition: (position: Position) => {
       return get().cargos.findIndex(
         (cargo) => cargo.x === position.x && cargo.y === position.y,
       );
     },
-    move: (index: number, position: Position) => {
+    move: (findPos, newPosition) => {
+      const index = get()._findCargoWithPosition(findPos);
+      if (index === -1) return;
       set((state) => {
-        state.cargos[index] = position;
+        state.cargos[index] = newPosition;
       });
+    },
+    isCargo: (position: Position) => {
+      return get()._findCargoWithPosition(position) !== -1;
     },
   })),
 );

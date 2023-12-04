@@ -15,7 +15,7 @@ export type PlayerStore = {
 };
 
 const isWall = useMapStore.getState().isWall;
-const findCargoWithPosition = useCargoStore.getState().findCargoWithPosition;
+const isCargo = useCargoStore.getState().isCargo;
 
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
   player: {
@@ -31,13 +31,21 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     if (isWall(newPlayer)) {
       return;
     }
-    const cargoIndex = findCargoWithPosition(newPlayer);
-    if (cargoIndex !== -1) {
-      useCargoStore.getState().move(cargoIndex, {
+
+    const cargos = useCargoStore.getState().cargos;
+    if (cargos.length > 0 && isCargo(newPlayer)) {
+      const cargoTarget = {
         x: newPlayer.x + dx,
         y: newPlayer.y + dy,
-      });
+      };
+
+      if (isWall(cargoTarget)) {
+        return;
+      }
+      if (isCargo(cargoTarget)) return;
+      useCargoStore.getState().move(newPlayer, cargoTarget);
     }
+
     get().setPlayerPosition(newPlayer);
   },
   movePlayerLeft: () => {
