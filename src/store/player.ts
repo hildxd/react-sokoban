@@ -14,39 +14,30 @@ export type PlayerStore = {
   _move: (dx: number, dy: number) => void;
 };
 
-const isWall = useMapStore.getState().isWall;
-const isCargo = useCargoStore.getState().isCargo;
-
 export const usePlayerStore = create<PlayerStore>((set, get) => ({
   player: {
     x: 1,
     y: 1,
   },
   _move: (dx, dy) => {
-    const newPlayer = {
+    const nextPosition = {
       x: get().player.x + dx,
       y: get().player.y + dy,
     };
 
-    if (isWall(newPlayer)) {
+    const { isWall } = useMapStore.getState();
+    if (isWall(nextPosition)) {
       return;
     }
 
-    const cargos = useCargoStore.getState().cargos;
-    if (cargos.length > 0 && isCargo(newPlayer)) {
-      const cargoTarget = {
-        x: newPlayer.x + dx,
-        y: newPlayer.y + dy,
-      };
-
-      if (isWall(cargoTarget)) {
-        return;
-      }
-      if (isCargo(cargoTarget)) return;
-      useCargoStore.getState().move(newPlayer, cargoTarget);
+    const { findCargo, moveCargo } = useCargoStore.getState();
+    const cargo = findCargo(nextPosition);
+    if (cargo) {
+      const isMoveCargo = moveCargo(cargo, dx, dy);
+      if (!isMoveCargo) return;
     }
 
-    get().setPlayerPosition(newPlayer);
+    get().setPlayerPosition(nextPosition);
   },
   movePlayerLeft: () => {
     get()._move(-1, 0);

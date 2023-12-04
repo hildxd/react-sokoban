@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Position } from "../hooks/usePosition.ts";
+import { useMapStore } from "./map.ts";
 export type Cargo = {
   x: number;
   y: number;
@@ -9,9 +10,8 @@ export type Cargo = {
 type CargoStore = {
   cargos: Cargo[];
   setupCargos: (cargos: Cargo[]) => void;
-  _findCargoWithPosition: (position: Position) => number;
-  move: (findPosition: Position, newPosition: Position) => void;
-  isCargo: (position: Position) => boolean;
+  findCargo: (position: Position) => Cargo | undefined;
+  moveCargo: (cargo: Cargo, dx: number, dy: number) => boolean;
 };
 
 export const useCargoStore = create(
@@ -22,20 +22,26 @@ export const useCargoStore = create(
         state.cargos = cargos;
       });
     },
-    _findCargoWithPosition: (position: Position) => {
-      return get().cargos.findIndex(
+    findCargo: (position: Position) => {
+      return get().cargos.find(
         (cargo) => cargo.x === position.x && cargo.y === position.y,
       );
     },
-    move: (findPos, newPosition) => {
-      const index = get()._findCargoWithPosition(findPos);
-      if (index === -1) return;
+    moveCargo: (cargo, dx, dy) => {
+      const { isWall } = useMapStore.getState();
+      const position = {
+        x: cargo.x + dx,
+        y: cargo.y + dy,
+      };
+      if (isWall(position)) return false;
+      if (get().findCargo(position)) return false;
       set((state) => {
-        state.cargos[index] = newPosition;
+        const index = state.cargos.findIndex(
+          (c) => c.x === cargo.x && c.y === cargo.y,
+        );
+        state.cargos[index] = position;
       });
-    },
-    isCargo: (position: Position) => {
-      return get()._findCargoWithPosition(position) !== -1;
+      return true;
     },
   })),
 );
