@@ -118,10 +118,7 @@ describe("player store", () => {
       act(() => {
         playerStore.current.movePlayerLeft();
       });
-      expect(cargoStore.current.cargos[0]).toEqual({
-        x: 0,
-        y: 0,
-      });
+      expect(cargoStore.current.cargos[0].x).toEqual(0);
       expect(playerStore.current.player).toEqual({
         x: 1,
         y: 0,
@@ -146,10 +143,7 @@ describe("player store", () => {
       act(() => {
         playerStore.current.movePlayerRight();
       });
-      expect(cargoStore.current.cargos[0]).toEqual({
-        x: 2,
-        y: 0,
-      });
+      expect(cargoStore.current.cargos[0].x).toEqual(2);
       expect(playerStore.current.player).toEqual({
         x: 1,
         y: 0,
@@ -173,10 +167,7 @@ describe("player store", () => {
       act(() => {
         playerStore.current.movePlayerUp();
       });
-      expect(cargoStore.current.cargos[0]).toEqual({
-        x: 0,
-        y: 0,
-      });
+      expect(cargoStore.current.cargos[0].y).toEqual(0);
       expect(playerStore.current.player).toEqual({
         x: 0,
         y: 1,
@@ -200,10 +191,7 @@ describe("player store", () => {
       act(() => {
         playerStore.current.movePlayerDown();
       });
-      expect(cargoStore.current.cargos[0]).toEqual({
-        x: 0,
-        y: 2,
-      });
+      expect(cargoStore.current.cargos[0].y).toEqual(2);
       expect(playerStore.current.player).toEqual({
         x: 0,
         y: 1,

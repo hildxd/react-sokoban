@@ -2,9 +2,11 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { Position } from "../hooks/usePosition.ts";
 import { useMapStore } from "./map.ts";
+import { useTargetStore } from "./target.ts";
 export type Cargo = {
   x: number;
   y: number;
+  onTarget: boolean;
 };
 
 type CargoStore = {
@@ -35,11 +37,16 @@ export const useCargoStore = create(
       };
       if (isWall(position)) return false;
       if (get().findCargo(position)) return false;
+      const { isTarget } = useTargetStore.getState();
       set((state) => {
         const index = state.cargos.findIndex(
           (c) => c.x === cargo.x && c.y === cargo.y,
         );
-        state.cargos[index] = position;
+
+        state.cargos[index] = {
+          ...position,
+          onTarget: isTarget(position),
+        };
       });
       return true;
     },

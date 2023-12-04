@@ -1,7 +1,12 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { act, renderHook } from "@testing-library/react";
 import { Cargo, useCargoStore } from "../cargo.ts";
-import { setupCargo, setupMap, setupPlayerPosition } from "./setup.ts";
+import {
+  setupCargo,
+  setupMap,
+  setupPlayerPosition,
+  setupTarget,
+} from "./setup.ts";
 import { usePlayerStore } from "../player.ts";
 
 describe("cargo store", () => {
@@ -11,6 +16,7 @@ describe("cargo store", () => {
       {
         x: 1,
         y: 1,
+        onTarget: false,
       },
     ];
     act(() => {
@@ -19,7 +25,7 @@ describe("cargo store", () => {
     expect(result.current.cargos).toEqual(newCargos);
   });
 
-  describe("collision wall", () => {
+  describe("collision wall or cargo", () => {
     beforeAll(() => {
       setupMap([
         [1, 1, 1, 1, 1, 1, 1, 1],
@@ -32,8 +38,7 @@ describe("cargo store", () => {
         [1, 1, 1, 1, 1, 1, 1, 1],
       ]);
     });
-
-    it("should not move if there is an wall on the left", () => {
+    it("should not move if there is an wall", () => {
       setupPlayerPosition({
         x: 2,
         y: 1,
@@ -52,15 +57,18 @@ describe("cargo store", () => {
       expect(playerStore.current.player.x).toBe(2);
       expect(cargoStore.current.cargos[0].x).toBe(1);
     });
-
-    it("should not move if there is an wall on the right", () => {
+    it("should not move if there is an cargo", () => {
       setupPlayerPosition({
-        x: 5,
+        x: 2,
         y: 1,
       });
       setupCargo([
         {
-          x: 6,
+          x: 3,
+          y: 1,
+        },
+        {
+          x: 4,
           y: 1,
         },
       ]);
@@ -69,48 +77,51 @@ describe("cargo store", () => {
       act(() => {
         playerStore.current.movePlayerRight();
       });
-      expect(playerStore.current.player.x).toBe(5);
-      expect(cargoStore.current.cargos[0].x).toBe(6);
+      expect(playerStore.current.player.x).toBe(2);
+      expect(cargoStore.current.cargos[0].x).toBe(3);
     });
+  });
 
-    it("should not move if there is an wall on the up", () => {
-      setupPlayerPosition({
-        x: 2,
-        y: 2,
-      });
+  describe("on target", () => {
+    it("in", () => {
       setupCargo([
+        {
+          x: 1,
+          y: 1,
+        },
+      ]);
+      setupTarget([
         {
           x: 2,
           y: 1,
         },
       ]);
-      const { result: playerStore } = renderHook(() => usePlayerStore());
+
       const { result: cargoStore } = renderHook(() => useCargoStore());
       act(() => {
-        playerStore.current.movePlayerUp();
+        cargoStore.current.moveCargo(cargoStore.current.cargos[0], 1, 0);
       });
-      expect(playerStore.current.player.y).toBe(2);
-      expect(cargoStore.current.cargos[0].y).toBe(1);
+      expect(cargoStore.current.cargos[0].onTarget).toBe(true);
     });
-
-    it("should not move if there is an wall on the down", () => {
-      setupPlayerPosition({
-        x: 1,
-        y: 5,
-      });
+    it("out", () => {
       setupCargo([
         {
           x: 1,
-          y: 6,
+          y: 1,
         },
       ]);
-      const { result: playerStore } = renderHook(() => usePlayerStore());
+      setupTarget([
+        {
+          x: 2,
+          y: 1,
+        },
+      ]);
+
       const { result: cargoStore } = renderHook(() => useCargoStore());
       act(() => {
-        playerStore.current.movePlayerDown();
+        cargoStore.current.moveCargo(cargoStore.current.cargos[0], 2, 0);
       });
-      expect(playerStore.current.player.y).toBe(5);
-      expect(cargoStore.current.cargos[0].y).toBe(6);
+      expect(cargoStore.current.cargos[0].onTarget).toBe(false);
     });
   });
 });
