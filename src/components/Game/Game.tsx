@@ -5,10 +5,12 @@ import { useCargoStore } from "../../store/cargo.ts";
 import { useEffect } from "react";
 import { useTargetStore } from "../../store/target.ts";
 import { Target } from "./Target.tsx";
+import { useGameStore } from "../../store/game.ts";
 
 export const Game = () => {
   const { cargos, setupCargos } = useCargoStore();
   const { targets, setupTargets } = useTargetStore();
+  const { isWin } = useGameStore()
   useEffect(() => {
     setupCargos([
       { x: 2, y: 2, onTarget: false },
@@ -30,6 +32,7 @@ export const Game = () => {
       {cargos.map((cargo, index) => (
         <Cargo key={index} {...cargo} />
       ))}
+      {isWin && <div>next level</div>}
     </div>
   );
 };
