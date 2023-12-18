@@ -19,12 +19,10 @@ export const setupPlayerPosition = (pos: Position) => {
   });
 };
 
-export const setupCargo = (cargos: Omit<Cargo, "onTarget">[]) => {
+export const setupCargo = (positions: Position[]) => {
   const { result } = renderHook(() => useCargoStore());
   act(() => {
-    result.current.setupCargos(
-      cargos.map((cargo) => ({ ...cargo, onTarget: false })),
-    );
+    result.current.setupCargos(positions);
   });
 };
 

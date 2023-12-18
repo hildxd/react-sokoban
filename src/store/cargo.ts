@@ -11,7 +11,7 @@ export type Cargo = {
 
 type CargoStore = {
   cargos: Cargo[];
-  setupCargos: (cargos: Cargo[]) => void;
+  setupCargos: (position: Position[]) => void;
   findCargo: (position: Position) => Cargo | undefined;
   moveCargo: (cargo: Cargo, dx: number, dy: number) => boolean;
 };
@@ -19,9 +19,13 @@ type CargoStore = {
 export const useCargoStore = create(
   immer<CargoStore>((set, get) => ({
     cargos: [],
-    setupCargos: (cargos: Cargo[]) => {
+    setupCargos: (positions) => {
       set((state) => {
-        state.cargos = cargos;
+        state.cargos = positions.map((position) => ({
+          x: position.x,
+          y: position.y,
+          onTarget: false,
+        }));
       });
     },
     findCargo: (position: Position) => {

@@ -6,20 +6,14 @@ import { useEffect } from "react";
 import { useTargetStore } from "../../store/target.ts";
 import { Target } from "./Target.tsx";
 import { useGameStore } from "../../store/game.ts";
+import { gameData } from "../../data/game.ts";
 
 export const Game = () => {
-  const { cargos, setupCargos } = useCargoStore();
-  const { targets, setupTargets } = useTargetStore();
-  const { isWin } = useGameStore()
+  const { cargos } = useCargoStore();
+  const { targets } = useTargetStore();
+  const { isWin, setupGameData } = useGameStore()
   useEffect(() => {
-    setupCargos([
-      { x: 2, y: 2, onTarget: false },
-      { x: 3, y: 2, onTarget: false },
-    ]);
-    setupTargets([
-      { x: 5, y: 5 },
-      { x: 5, y: 6 },
-    ]);
+    setupGameData(gameData)
   }, []);
 
   return (
@@ -32,7 +26,7 @@ export const Game = () => {
       {cargos.map((cargo, index) => (
         <Cargo key={index} {...cargo} />
       ))}
-      {isWin && <div>next level</div>}
+      {isWin && <button>下一关</button>}
     </div>
   );
 };
