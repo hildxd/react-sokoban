@@ -11,7 +11,7 @@ import { gameData } from "../../data/game.ts";
 export const Game = () => {
   const { cargos } = useCargoStore();
   const { targets } = useTargetStore();
-  const { isWin, setupGameData } = useGameStore()
+  const { isWin, setupGameData, setupNextLevel, level } = useGameStore()
   useEffect(() => {
     setupGameData(gameData)
   }, []);
@@ -26,7 +26,7 @@ export const Game = () => {
       {cargos.map((cargo, index) => (
         <Cargo key={index} {...cargo} />
       ))}
-      {isWin && <button>下一关</button>}
+      {isWin && level < gameData.length && <button onClick={setupNextLevel}>下一关</button>}
     </div>
   );
 };

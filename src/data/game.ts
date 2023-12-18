@@ -8,7 +8,7 @@ export interface GameData {
     targets: Position[]
 }
 
-export const gameData: GameData = {
+let firstLevelData = {
     map: [
         [1, 1, 1, 1, 1, 1, 1, 1],
         [1, 2, 2, 2, 2, 2, 2, 1],
@@ -31,4 +31,33 @@ export const gameData: GameData = {
         { x: 5, y: 5 },
         { x: 5, y: 6 },
     ]
+
 }
+
+let secondLevelData = {
+    map: [
+        [1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 2, 2, 2, 2, 2, 1, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 2, 2, 2, 2, 2, 2, 1],
+        [1, 1, 2, 2, 2, 2, 2, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+    cargos: [
+        { x: 2, y: 2 },
+        { x: 3, y: 2 },
+    ],
+    player: {
+        x: 1,
+        y: 1,
+    },
+    targets: [
+        { x: 5, y: 5 },
+        { x: 5, y: 6 },
+    ]
+
+}
+
+export const gameData: GameData[] = [firstLevelData, secondLevelData]
